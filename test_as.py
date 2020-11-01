@@ -1,17 +1,11 @@
-from dataclasses import asdict
-from dacite import from_dict
-
+import pytest
+from api_client import VoximplantAPI
 from models.item_purchase_by_client import ItemPurchaseByClientRequest, ItemPurchaseByClient, Item
 
 
-def test_item_purchase_by_client(api_client, client, single_order):
-    expected_items = [
-        Item(item_id=single_order['item_id'], purchased=True, last_order_number=single_order['order_number'],
-             last_purchase_date="date",
-             purchase_count=single_order['quantity'])]
-    request = ItemPurchaseByClientRequest(client_id=client['client_id'], items=single_order['order_id'])
-    res = api_client.post(
-        path="service/v1/item/purchase/by-client",
-        data=asdict(request))
-    fact_items = from_dict(data_class=ItemPurchaseByClient, data=res)
-    assert expected_items == fact_items
+@pytest.mark.parametrize('items_req', [2], indirect=True)
+def test_item_purchase_by_client_item_req(client, items_req, single_order, items_resp):
+    api = VoximplantAPI()
+    request = ItemPurchaseByClientRequest(client_id=client['client_id'], items=items_req)
+    items_fact = api.item_purchase_by_client(request=request)
+    assert items_fact == items_resp

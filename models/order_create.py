@@ -3,9 +3,9 @@ from typing import List
 
 
 @dataclass
-class Item:
-    item_id: str = 1
-    price: int = 200
+class OrderItem:
+    item_id: str = "1"
+    price: int = 100
     quantity: int = 1
 
 
@@ -14,7 +14,7 @@ class OrderRequest:
     client_id: str = None
     address: str = None
     phone: str = None
-    items: List[Item] = field(default_factory=list)
+    items: List[OrderItem] = field(default_factory=list)
 
 
 @dataclass()
